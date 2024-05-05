@@ -16,7 +16,7 @@ function readFile(filename) {
 
 test.after(() => {
 	try {
-		fs.rmSync(mockDir + "/dist", { recursive: true });
+		// fs.rmSync(mockDir + "/dist", { recursive: true });
 	} catch {}
 });
 
@@ -125,3 +125,15 @@ test("txt template with variant-unique values", async (t) => {
 	t.is(moon, "Rosé Pine Moon is our not as dark variant");
 	t.is(dawn, "Rosé Pine Dawn is our light variant");
 });
+
+test("template directory with multiple files", async (t) => {
+	await build({
+		__skipReadmeVersion: true,
+		template: mockDir + "/template",
+		output: mockDir + "/dist",
+	});
+});
+// const [main, moon, dawn] = ["", "-moon", "-dawn"].map((v) =>
+// 	JSON.parse(readFile(`rose-pine${v}.json`)),
+// );
+//
