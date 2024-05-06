@@ -22,8 +22,7 @@ function generateVariant(
 	let result = template;
 
 	for (const role of roleKeys) {
-		//@ts-ignore
-		const currentColor = roleColors[role][variant.key];
+		const currentColor = roleColors[role][variant.key as keyof typeof variants];
 
 		if ("alpha" in currentColor) {
 			// Replace alpha colors
@@ -64,7 +63,7 @@ export const generateVariants = (config: Config) => {
 		const currentVariant = variants[variant];
 
 		if (isDir) {
-			fs.mkdirSync(config.output + "/" + currentVariant.key, {
+			fs.mkdirSync(path.join(config.output, currentVariant.key), {
 				recursive: true,
 			});
 
@@ -78,16 +77,15 @@ export const generateVariants = (config: Config) => {
 				generateVariant(
 					currentVariant,
 					template,
-					`${currentVariant.key}/${file}`,
+					path.join(currentVariant.key, file),
 					config,
 				);
 			}
 		} else {
-			const template = fs.readFileSync(config.template, "utf8").toString();
 			generateVariant(
 				currentVariant,
-				template,
-				`${currentVariant.id}${extension}`,
+				fs.readFileSync(config.template, "utf8").toString(),
+				currentVariant.id + extension,
 				config,
 			);
 		}
