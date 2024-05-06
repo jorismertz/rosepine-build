@@ -16,7 +16,7 @@ function readFile(filename) {
 
 test.after(() => {
 	try {
-		// fs.rmSync(mockDir + "/dist", { recursive: true });
+		fs.rmSync(mockDir + "/dist", { recursive: true });
 	} catch {}
 });
 
@@ -132,8 +132,32 @@ test("template directory with multiple files", async (t) => {
 		template: mockDir + "/template",
 		output: mockDir + "/dist",
 	});
+
+	["main", "moon", "dawn"].forEach((variant) => {
+		const [json, txt] = ["json", "txt"].map((ext) =>
+			readFile(`${variant}/template.${ext}`).trim(),
+		);
+
+		const capitalizedVariant =
+			variant.charAt(0).toUpperCase() + variant.slice(1);
+
+		t.like(JSON.parse(json), {
+			id: `rose-pine${variant !== "main" ? `-${variant}` : ""}`,
+			name: "Rosé Pine" + (variant !== "main" ? ` ${capitalizedVariant}` : ""),
+			description:
+				"All natural pine, faux fur and a bit of soho vibes for the classy minimalist",
+		});
+
+		switch (variant) {
+			case "main":
+				t.is(txt, "Rosé Pine is our dark variant");
+				break;
+			case "moon":
+				t.is(txt, "Rosé Pine Moon is our not as dark variant");
+				break;
+			case "dawn":
+				t.is(txt, "Rosé Pine Dawn is our light variant");
+				break;
+		}
+	});
 });
-// const [main, moon, dawn] = ["", "-moon", "-dawn"].map((v) =>
-// 	JSON.parse(readFile(`rose-pine${v}.json`)),
-// );
-//
